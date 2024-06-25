@@ -4,195 +4,138 @@ from datetime import date
 from decimal import Decimal
 
 
-director1 = Director(
-    first_name = "Chris",
-    last_name = "Columbus",
-    birth_date = date(1958, 9, 10)
-)
-director1.save()
+while True:
+    print("\n1. Додати актора")
+    print("2. Додати фільм")
+    print("3. Додати директора фільму")
+    print("4. Додати показ фільму")
+    print("5. Додати жанр фільму")
+    print("6. Додати кінотеатр")
+    print("7. Додати квиток")
+    print("8. Додати відгук")
+    print("9. Додати актора до фільму")
+    print("10. Зробити певну операцію з таблицею відгуків")
+    print("11. Вийти")
 
-genre1 = Genre(
-    name = "Adventure"
-)
-genre1.save()
+    choice = input("Оберіть опцію (1-11): ")
 
-movie1 = Movie(
-    title = "Harry Potter",
-    duration = "2.53",
-    genre_id = genre1,
-    director_id = director1
-)
-movie1.save()
+    if choice == "1":
+        first_name = input("Вкажи ім'я актора")
+        last_name = input("Вкажи прізвище актора")
+        year_actor = int(input("Вкажи рік народження актора"))
+        month_actor = int(input("Вкажи місяць народження актора"))
+        day_actor = int(input("Вкажи день народження актора"))
+        new_actor = Actor(first_name = first_name, last_name = last_name, birth_date = date(year_actor, month_actor, day_actor))
+        new_actor.save()
+        print("Актора додано!")
+    if choice == "2":
+        title = input("Вкажи назву фільму")
+        duration = input("Вкажи тривалість фільму")
+        genre_id = int(input("Вкажи id жанру фільму"))
+        director_id = int(input("Вкажи id директора фільму"))
+        genre_movie = Genre.objects.get(id = genre_id)
+        director_movie = Director.objects.get(id=director_id)
+        if genre_movie and director_movie:
+            new_movie = Movie(title = title, duration=duration, genre_id=genre_movie, director_id=director_movie)
+            new_movie.save()
+            print("Фільм створено!")
+        else:
+            print("Жанр або режисера не знайдено")
+    if choice == "4":
+        movie_id = int(input("Вкажи id фільму"))
+        screening_year = int(input("Рік показу"))
+        screening_month = int(input("Місяць показу"))
+        screening_day = int(input("День показу"))
+        theater_id = int(input("id кінотеатру"))
+        screen_movie = Movie.objects.get(id = movie_id)
+        screen_theater = Theater.objects.get(id=theater_id)
+        if screen_movie and screen_theater:
+            new_screening = Screening(movie_id=screen_movie, screening_date = date(screening_year, screening_month, screening_day), theater_id=screen_theater)
+            new_screening.save()
+            print("Сеанс створено!")
+        else:
+            print("Театр або фільм не знайдено.")
 
-actor1 = Actor(
-    first_name = "Daniel",
-    last_name = "Radcliffe",
-    birth_date = date(1989, 7, 23)
-)
-actor1.save()
-actor1.movies.add(movie1)
+    if choice == "3":
+        first_name_director = input("Вкажи ім'я директора")
+        last_name_director = input("Вкажи прізвище директора")
+        year_actor_director = int(input("Вкажи рік народження директора"))
+        month_actor_director = int(input("Вкажи місяць народження директора"))
+        day_actor_director = int(input("Вкажи день народження директора"))
+        new_director = Actor(first_name=first_name_director, last_name=last_name_director, birth_date=date(year_actor_director, month_actor_director, day_actor_director))
+        new_director.save()
+        print("Директора додано!")
+    if choice == "5":
+        name_genre = input("Назва жанру")
+        new_genre = Genre(name=name_genre)
+        new_genre.save()
+        print("Жанр додано!")
+    if choice == "6":
+        name_theater = input("Назва кінотеатру")
+        location_theater = input("Місце знаходження кінотеатру")
+        capacity_theater = int(input("Вмісткість кінотеатру"))
+        new_theater = Theater(name = name_theater, location = location_theater, capacity = capacity_theater)
+        new_theater.save()
+        print("Театр додано!")
+    if choice == "7":
+        screening_id_ticket = int(input("Id сеансу"))
+        seat_number_ticket = input("Місце сидіння")
+        price_ticket = input("Ціна квитка")
+        screening_ticket = Screening.objects.get(id = screening_id_ticket)
+        if screening_ticket:
+            new_ticket = Ticket(screening_id = screening_ticket, seat_number = seat_number_ticket, price = price_ticket)
+            new_ticket.save()
+            print("Квиток додано!")
+        else:
+            print("Сеанс не знайдено")
+    if choice == "8":
+        movie_id_review = int(input("Id фільму"))
+        reviewer_first_name = input("Ім'я рев'ювера")
+        reviewer_last_name = input("Прізвище рев'ювера")
+        rating = input("Рейтинг відгуку")
+        comment = input("Вкажи текст відгуку")
+        movie_review = Movie.objects.get(id = movie_id_review)
+        if movie_review:
+            new_review = Review(movie_id = movie_review, reviewer_first_name= reviewer_first_name, reviewer_last_name=reviewer_last_name, rating = rating, comment=comment)
+            new_review.save()
+            print("Відгук додано!")
+        else:
+            print("Шось не то")
+    if choice == "9":
+        id_actor = int(input("Id актора"))
+        id_movie = int(input("Id фільму"))
+        needed_actor = Actor.objects.get(id = id_actor)
+        needed_movie = Movie.objects.get(id = id_movie)
+        if needed_actor and needed_movie:
+            needed_actor.movies.add(needed_movie)
+            print("Актора додано до фільму!")
+        else:
+            print("Актора або фільм не знайдено.")
+    if choice == "10":
+        operations = input('''Обери операцію
+        1 - видалити запиc,
+        2 - змінити запис1
+        ''')
+        if operations == "1":
+            id_deleted_review = int(input("Вкажи id відгуку,який хочеш видалити"))
+            deleted_review = Review.objects.get(id = id_deleted_review)
+            if deleted_review:
+                deleted_review.delete()
+            else:
+                print("Некоректний id")
+        if operations == "2":
+            id_changed_review = int(input("Вкажи id відгуку,який хочеш змінити"))
+            changed_review = Review.objects.get(id = id_changed_review)
+            if changed_review:
+                new_comment_for_review = input("Вкажи новий текст до відгуку")
+                changed_review.comment = new_comment_for_review
+                changed_review.save()
+            else:
+                print("Некоректний id")
+    if choice == "11":
+        break
 
 
-theater1 = Theater(
-    name = "Planet of Kinos",
-    location = "ТРЦ «Forum Lviv», вулиця Під Дубом, 7Б",
-    capacity = 20
-)
-theater1.save()
 
-screen1 = Screening(
-    movie_id = movie1,
-    screening_date = date(2024, 7, 1),
-    theater_id = theater1
-)
-screen1.save()
 
-ticket1 = Ticket(
-    screening_id = screen1,
-    seat_number = 1,
-    price = "800.00"
-)
-ticket1.save()
 
-ticket2 = Ticket(
-    screening_id = screen1,
-    seat_number = 2,
-    price = "800.00"
-)
-ticket2.save()
-
-ticket3 = Ticket(
-    screening_id = screen1,
-    seat_number = 3,
-    price = "800.00"
-)
-ticket3.save()
-
-ticket4 = Ticket(
-    screening_id = screen1,
-    seat_number = 4,
-    price = "800.00"
-)
-ticket4.save()
-
-ticket5 = Ticket(
-    screening_id = screen1,
-    seat_number = 5,
-    price = "800.00"
-)
-ticket5.save()
-
-ticket6 = Ticket(
-    screening_id = screen1,
-    seat_number = 6,
-    price = "800.00"
-)
-ticket6.save()
-
-ticket7 = Ticket(
-    screening_id = screen1,
-    seat_number = 7,
-    price = "800.00"
-)
-ticket7.save()
-
-ticket8 = Ticket(
-    screening_id = screen1,
-    seat_number = 8,
-    price = "800.00"
-)
-ticket8.save()
-
-ticket9 = Ticket(
-    screening_id = screen1,
-    seat_number = 9,
-    price = "800.00"
-)
-ticket9.save()
-
-ticket10 = Ticket(
-    screening_id = screen1,
-    seat_number = 10,
-    price = "800.00"
-)
-ticket10.save()
-
-ticket11 = Ticket(
-    screening_id = screen1,
-    seat_number = 11,
-    price = "800.00"
-)
-ticket11.save()
-
-ticket12 = Ticket(
-    screening_id = screen1,
-    seat_number = 12,
-    price = "800.00"
-)
-ticket12.save()
-
-ticket13 = Ticket(
-    screening_id = screen1,
-    seat_number = 13,
-    price = "800.00"
-)
-ticket13.save()
-
-ticket14 = Ticket(
-    screening_id = screen1,
-    seat_number = 14,
-    price = "800.00"
-)
-ticket14.save()
-
-ticket15 = Ticket(
-    screening_id = screen1,
-    seat_number = 15,
-    price = "800.00"
-)
-ticket15.save()
-
-ticket16 = Ticket(
-    screening_id = screen1,
-    seat_number = 16,
-    price = "800.00"
-)
-ticket16.save()
-
-ticket17 = Ticket(
-    screening_id = screen1,
-    seat_number = 17,
-    price = "800.00"
-)
-ticket17.save()
-
-ticket18 = Ticket(
-    screening_id = screen1,
-    seat_number = 18,
-    price = "800.00"
-)
-ticket18.save()
-
-ticket19 = Ticket(
-    screening_id = screen1,
-    seat_number = 19,
-    price = "800.00"
-)
-ticket19.save()
-
-ticket20 = Ticket(
-    screening_id = screen1,
-    seat_number = 20,
-    price = "800.00"
-)
-ticket20.save()
-
-review1 = Review(
-    movie_id = movie1,
-    reviewer_first_name = "Matviy",
-    reviewer_last_name = "Gura",
-    rating = "99.99",
-    comment = "It's absolutely cool film about magic and another world"
-)
-
-review1.save()
